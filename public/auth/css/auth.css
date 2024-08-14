@@ -1,0 +1,36 @@
+/* body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('/public/auth/img/photo1.png') no-repeat;
+    background-position: center;
+    background-color: blueviolet;
+    color: white;
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 230px;
+    padding: 30px 240px;
+    border: 1px solid rgb(54, 54, 54);
+    background: transparent;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 2px black;
+}
+
+.form-container form .input{
+    width: 100%;
+}
+
+.form-container form .input label input {
+    display: block;
+    margin-bottom: 30px;
+    border: none;
+    color: white;
+    padding: 10px 5px;
+    border-radius: 5%;
+    font-size: 700;
+
+} */
