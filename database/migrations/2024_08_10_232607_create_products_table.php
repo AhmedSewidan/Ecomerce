@@ -15,7 +15,7 @@ class CreateProductsTable extends Migration {
 			$table->string('title', 100);
 			$table->decimal('price');
 			$table->integer('quantity');
-			$table->text('description')->default('null');
+			$table->text('description')->nullable();
 			$table->boolean('status')->default(1);
 			$table->foreign('category_id')->references('id')->on('categories')
 						->onDelete('cascade')

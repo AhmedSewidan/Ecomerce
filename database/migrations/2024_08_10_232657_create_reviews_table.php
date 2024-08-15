@@ -13,7 +13,7 @@ class CreateReviewsTable extends Migration {
 			$table->integer('client_id')->unsigned();
 			$table->integer('product_id')->unsigned();
 			$table->text('body');
-			$table->integer('stars');
+			$table->integer('rate');
 			$table->foreign('client_id')->references('id')->on('clients')
 						->onDelete('cascade')
 						->onUpdate('cascade');

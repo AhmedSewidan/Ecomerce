@@ -1,10 +1,13 @@
 <?php 
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\ApiControllers;
 
+use App\Http\Controllers\ApiControllers\ApiController;
+use App\Http\Resources\ApiResources\ProductResource;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
-class GovernorateController extends Controller 
+class ProductController extends ApiController 
 {
 
   /**
@@ -12,9 +15,13 @@ class GovernorateController extends Controller
    *
    * @return Response
    */
-  public function index()
+  public function index( Request $request )
   {
     
+    $products = Product::when($request->has('category_id'), function($query) use($request){
+      $query->where('category_id', $request->category_id);
+    } )->get(['id', 'title', 'price', 'quantity', 'description', 'status', 'photo']);
+    return $this->response( ProductResource::collection($products) );
   }
 
   /**

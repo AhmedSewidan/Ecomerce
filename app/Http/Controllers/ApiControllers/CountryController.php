@@ -1,10 +1,13 @@
 <?php 
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\ApiControllers;
 
+use App\Http\Controllers\ApiControllers\ApiController;
+use App\Http\Resources\ApiResources\CountryResource;
+use App\Models\Country;
 use Illuminate\Http\Request;
 
-class CityController extends Controller 
+class CountryController extends ApiController 
 {
 
   /**
@@ -14,6 +17,8 @@ class CityController extends Controller
    */
   public function index()
   {
+    $countries = Country::get(['id', 'title']);
+    return $this->response( CountryResource::collection($countries) );
     
   }
 

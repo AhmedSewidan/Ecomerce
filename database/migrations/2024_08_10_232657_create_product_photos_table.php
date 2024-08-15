@@ -11,7 +11,7 @@ class CreateProductPhotosTable extends Migration {
 		Schema::create('product_photos', function(Blueprint $table) {
 			$table->increments('id');
 			$table->integer('product_id')->unsigned();
-			$table->text('photo')->default('null');
+			$table->text('photo')->nullable();
 			$table->foreign('product_id')->references('id')->on('products')
 						->onDelete('cascade')
 						->onUpdate('cascade');

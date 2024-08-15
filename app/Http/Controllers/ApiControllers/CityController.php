@@ -1,10 +1,13 @@
 <?php 
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\ApiControllers;
 
+use App\Http\Controllers\ApiControllers\ApiController;
+use App\Http\Resources\ApiResources\CityResource;
+use App\Models\City;
 use Illuminate\Http\Request;
 
-class CountryController extends Controller 
+class CityController extends ApiController 
 {
 
   /**
@@ -12,9 +15,15 @@ class CountryController extends Controller
    *
    * @return Response
    */
-  public function index()
+  public function index( Request $request )
   {
-    
+    $cities = City::when($request->has('governorate_id'), function($query) use($request){
+
+      $query->where('governorate_id', $request->governorate_id);
+      
+    } )->get(['id', 'title']);
+
+    return $this->response( CityResource::collection($cities) );
   }
 
   /**
@@ -24,7 +33,7 @@ class CountryController extends Controller
    */
   public function create()
   {
-    
+
   }
 
   /**
@@ -34,7 +43,7 @@ class CountryController extends Controller
    */
   public function store(Request $request)
   {
-    
+
   }
 
   /**
@@ -45,7 +54,7 @@ class CountryController extends Controller
    */
   public function show($id)
   {
-    
+
   }
 
   /**
@@ -56,7 +65,7 @@ class CountryController extends Controller
    */
   public function edit($id)
   {
-    
+
   }
 
   /**
@@ -67,7 +76,7 @@ class CountryController extends Controller
    */
   public function update($id)
   {
-    
+
   }
 
   /**
@@ -78,9 +87,9 @@ class CountryController extends Controller
    */
   public function destroy($id)
   {
-    
+
   }
-  
+
 }
 
 ?>

@@ -1,10 +1,13 @@
 <?php 
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\ApiControllers;
 
+use App\Http\Controllers\ApiControllers\ApiController;
+use App\Http\Resources\ApiResources\GovernorateResource;
+use App\Models\Governorate;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller 
+class GovernorateController extends ApiController 
 {
 
   /**
@@ -12,9 +15,15 @@ class CategoryController extends Controller
    *
    * @return Response
    */
-  public function index()
+  public function index(Request $request)
   {
-    
+      $governorates = Governorate::when($request->has("country_id"), function($query) use($request){
+
+        $query->where("country_id", $request->country_id);  
+
+      })->get(['id', 'title']);
+      return $this->response( GovernorateResource::collection($governorates) );
+      return $request->country_id;
   }
 
   /**

@@ -1,10 +1,13 @@
 <?php 
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\ApiControllers;
 
+use App\Http\Controllers\ApiControllers\ApiController;
+use App\Http\Resources\ApiResources\CategoryResource;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller 
+class CategoryController extends ApiController
 {
 
   /**
@@ -14,7 +17,8 @@ class ProductController extends Controller
    */
   public function index()
   {
-    
+      $categories = Category::get(['id', 'title', 'photo']); //
+      return $this->response( CategoryResource::collection($categories) );
   }
 
   /**

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,5 +21,5 @@ use Illuminate\Support\Facades\Route;
 // });
 Route::controller(DashboardController::class)->group(function(){
     Route::get('/', 'index');
-    Route::get('/register', 'register');
+    // Route::get('/register', 'register');
 });
