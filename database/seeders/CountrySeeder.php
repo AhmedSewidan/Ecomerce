@@ -13,6 +13,6 @@ class CountrySeeder extends Seeder
      */
     public function run(): void
     {
-        Country::factory(20)->create();
+        Country::factory(3)->create();
     }
 }

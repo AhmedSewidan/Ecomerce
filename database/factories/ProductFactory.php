@@ -21,6 +21,7 @@ class ProductFactory extends Factory
     {
         return [
             'category_id' => Category::inRandomOrder()->first()->id,
+            'photo'     => 'ahmed.jpg',
             'title' => 'Product-' . self::$counter++,
             'description' => $this->faker->sentence,
             'price' => $this->faker->randomFloat(2, 10, 1000),

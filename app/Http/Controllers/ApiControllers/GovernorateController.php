@@ -17,13 +17,13 @@ class GovernorateController extends ApiController
    */
   public function index(Request $request)
   {
-      $governorates = Governorate::when($request->has("country_id"), function($query) use($request){
+      $governorates = Governorate::when( $request->has("country_id"), function($query) use($request){
 
         $query->where("country_id", $request->country_id);  
 
       })->get(['id', 'title']);
       return $this->response( GovernorateResource::collection($governorates) );
-      return $request->country_id;
+      // return $request->country_id;
   }
 
   /**

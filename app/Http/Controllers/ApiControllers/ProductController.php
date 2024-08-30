@@ -20,7 +20,7 @@ class ProductController extends ApiController
     
     $products = Product::when($request->has('category_id'), function($query) use($request){
       $query->where('category_id', $request->category_id);
-    } )->get(['id', 'title', 'price', 'quantity', 'description', 'status', 'photo']);
+    } )->get(['id', 'category_id', 'title', 'price', 'quantity', 'description', 'status', 'photo']);
     return $this->response( ProductResource::collection($products) );
   }
 
