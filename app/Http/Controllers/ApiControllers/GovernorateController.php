@@ -21,9 +21,8 @@ class GovernorateController extends ApiController
 
         $query->where("country_id", $request->country_id);  
 
-      })->get(['id', 'title']);
+      })->get(['id', 'country_id', 'title']);
       return $this->response( GovernorateResource::collection($governorates) );
-      // return $request->country_id;
   }
 
   /**

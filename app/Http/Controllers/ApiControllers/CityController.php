@@ -21,7 +21,7 @@ class CityController extends ApiController
 
       $query->where('governorate_id', $request->governorate_id);
       
-    } )->get(['id', 'title']);
+    } )->get(['id', 'governorate_id', 'title']);
 
     return $this->response( CityResource::collection($cities) );
   }
