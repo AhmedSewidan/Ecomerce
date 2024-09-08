@@ -24,7 +24,8 @@ class CategoryFactory extends Factory
     {
 
         return [
-            'title' => 'Category' . self::$counter++,
+            'status' => random_int(0, 1),
+            'title'  => 'Category_' . self::$counter++,
         ];
     }
 }

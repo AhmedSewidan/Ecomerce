@@ -11,12 +11,14 @@ class CreateProductsTable extends Migration {
 		Schema::create('products', function(Blueprint $table) {
 			$table->increments('id');
 			$table->integer('category_id')->unsigned();
+            $table->unsignedBigInteger('brand_id');
 			$table->text('photo');
 			$table->string('title', 100);
 			$table->decimal('price');
 			$table->integer('quantity');
 			$table->text('description')->nullable();
 			$table->boolean('status')->default(1);
+            $table->foreign('brand_id')->references('id')->on('brands');
 			$table->foreign('category_id')->references('id')->on('categories')
 						->onDelete('cascade')
 						->onUpdate('cascade');
