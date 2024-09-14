@@ -15,7 +15,7 @@ class BrandFactory extends Factory
      * @return array<string, mixed>
      */
     
-    protected static $counter = 1;
+    protected static $counter = 5;
 
     public function definition(): array
     {

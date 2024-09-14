@@ -14,7 +14,7 @@ class Product extends Model
     protected $fillable = array('photo', 'title', 'price', 'quantity', 'description', 'status');
 
     // Get Methods
-    public function getAmountAfterDiscount()
+    public function getAmountAfterDiscountAttribute()
     {
         return $this->discount ? ($this->price * $this->discount) : $this->price;
     }

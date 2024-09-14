@@ -27,16 +27,25 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/categories', [CategoryController::class, 'index']);
+// Category Controller
+Route::controller(CategoryController::class)->group(function(){
 
+    Route::get('/categories', 'index');
+    Route::get('/show-category/{id}', 'show')->name('show-category');
+
+});
+
+// Product Controller
 Route::controller(ProductController::class)->group(function(){
 
     Route::get('/products', 'index');
     Route::get('/latest-products', 'latestProducts');
     Route::get('/most-ordered-products', 'mostOrdered');
+    Route::get('/show-product/{id}', 'show')->name('show-product');
 
 });
 
+// Brand Controller
 Route::controller(BrandController::class)->group(function(){
 
     Route::get('/all-brands', 'index');
@@ -48,4 +57,11 @@ Route::controller(BrandController::class)->group(function(){
 Route::get('/countries', [CountryController::class, 'index']);
 Route::get('/governorates', [GovernorateController::class, 'index']);
 Route::get('/cities', [CityController::class, 'index']);
-Route::get('/homeSlider', [SliderController::class, 'homeSlider']);
+
+// Slider Controller
+Route::controller(SliderController::class)->group(function(){
+
+    Route::get('/sliders', 'index');
+    Route::get('/home-slider', 'homeSlider')->name('home-slider');
+
+});

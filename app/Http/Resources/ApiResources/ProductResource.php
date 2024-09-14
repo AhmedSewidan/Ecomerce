@@ -24,8 +24,8 @@ class ProductResource extends JsonResource
             'quantity'               => $this->quantity,
             'description'            => $this->description,
             'status'                 => $this->status,
-            'photo'                  => asset( 'adminlte/img/' . ($this->photo ?? 'product.jpg')),
-            'amount_after_discount'  => strval( $this->getAmountAfterDiscount() ),
+            'photo'                  => asset( 'adminlte/img/' . ( $this->photo ?? 'default_product.jpg' )),
+            'amount_after_discount'  => strval( $this->amountAfterDiscount ),
         ];
     }
 }
