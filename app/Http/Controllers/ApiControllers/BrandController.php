@@ -21,7 +21,7 @@ class BrandController extends ApiController
     
     public function mostFamousBrands()
     {
-        return $this->response( BrandResource::collection( Brand::where('status', 1)->get() ) );
+        return $this->response( BrandResource::collection( Brand::mostFamous()->get() ) );
     }
 
     /**
@@ -45,9 +45,10 @@ class BrandController extends ApiController
      */
     public function show(Request $request)
     {
+        $brand = Brand::findOrFail( $request->brand_id );
         return $this->response( [
-            'brand'          => new BrandResource( Brand::find( $request->brand_id ) ),
-            'products'       => ProductResource::collection( Product::where('brand_id', $request->brand_id )->get() ),
+                'brand'          =>  new BrandResource( $brand ),
+                'products'       =>  ProductResource::collection( $brand->products ),
             ]);
     }
 

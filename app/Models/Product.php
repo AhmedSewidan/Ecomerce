@@ -24,6 +24,11 @@ class Product extends Model
     {
         return $query->orderBy('created_at', 'desc');
     }
+    
+    public function scopeMostOrdered( $query )
+    {
+        return $query->where('status', 1);
+    }
 
     // Relations
     public function photos()

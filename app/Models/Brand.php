@@ -12,6 +12,14 @@ class Brand extends Model
     public $timestamps = true;
     protected $fillable = array('title', 'photo', 'web_link');
 
+
+    // Scopes
+    public function scopeMostFamous( $query )
+    {
+        return $query->where('status', 1);
+    }
+
+    // Relations
     public function products()
     {
         return $this->hasMany(Product::class);

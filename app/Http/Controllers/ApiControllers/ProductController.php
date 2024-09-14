@@ -32,7 +32,7 @@ class ProductController extends ApiController
   
   public function mostOrdered()
   {
-    $products = Product::where('status', 1)->limit(5)->get();
+    $products = Product::mostOrdered()->limit(5)->get();
     return $this->response( ProductResource::collection($products) );
   }
 
