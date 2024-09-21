@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('brands', function (Blueprint $table) {
+        Schema::create('codes', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('photo')->nullable();
-            $table->text('web_link')->nullable();
-            $table->text('description')->nullable();
-            $table->boolean('status');
-            $table->timestamps();
+            $table->unsignedBigInteger('client_id');
+            $table->string('code');
+            $table->timestamp('expires_at', 6);
+            $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
+            $table->timestamps(6);
         });
     }
 
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('brands');
+        Schema::dropIfExists('codes');
     }
 };

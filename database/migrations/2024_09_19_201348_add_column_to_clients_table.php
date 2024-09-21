@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->decimal('discount')->nullable();
+        Schema::table('clients', function (Blueprint $table) {
+            $table->timestamp('email_verified_at')->nullable()->after('password');
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('clients', function (Blueprint $table) {
             //
         });
     }

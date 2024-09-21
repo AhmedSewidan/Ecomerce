@@ -9,8 +9,8 @@ class CreateCitiesTable extends Migration {
 	public function up()
 	{
 		Schema::create('cities', function(Blueprint $table) {
-			$table->increments('id');
-			$table->integer('governorate_id')->unsigned();
+			$table->id('id');
+			$table->unsignedBigInteger('governorate_id');
 			$table->string('title', 100);
 			$table->foreign('governorate_id')->references('id')->on('governorates')
 						->onDelete('cascade')

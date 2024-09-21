@@ -9,9 +9,9 @@ class CreateAddressesTable extends Migration {
 	public function up()
 	{
 		Schema::create('addresses', function(Blueprint $table) {
-			$table->increments('id');
-			$table->integer('city_id')->unsigned();
-			$table->integer('client_id')->unsigned();
+			$table->id('id');
+			$table->unsignedBigInteger('city_id');
+			$table->unsignedBigInteger('client_id');
 			$table->text('address_line');
 			$table->foreign('city_id')->references('id')->on('cities')
 						->onDelete('cascade')

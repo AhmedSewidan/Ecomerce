@@ -17,9 +17,7 @@ class CountryController extends ApiController
    */
   public function index()
   {
-    $countries = Country::get(['id', 'title']);
-    return $this->response( CountryResource::collection($countries) );
-    
+    return CountryResource::collection( Country::paginate(5) );
   }
   
 }

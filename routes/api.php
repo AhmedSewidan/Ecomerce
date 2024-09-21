@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiControllers\AuthController;
 use App\Http\Controllers\ApiControllers\BrandController;
 use App\Http\Controllers\ApiControllers\CategoryController;
 use App\Http\Controllers\ApiControllers\CityController;
@@ -63,5 +64,27 @@ Route::controller(SliderController::class)->group(function(){
 
     Route::get('/sliders', 'index');
     Route::get('/home-slider', 'homeSlider')->name('home-slider');
+
+});
+
+Route::controller(AuthController::class)->group(function(){
+
+    
+    Route::middleware(['guest'])->group(function(){
+        Route::post('/register', 'register');
+        Route::post('/login', 'login');
+        Route::post('/send-OTP', 'sendOTP');
+        Route::post('/check-OTP', 'checkOTP');
+    });
+
+    Route::middleware(['auth'])->group(function(){
+
+        Route::post('/logout', 'logout');
+        Route::post('/refresh', 'refresh');
+        Route::post('/me', 'me');
+        Route::put('/update/{id}', 'update');
+        Route::post('/reset-password', 'resetPassword');
+
+    });
 
 });

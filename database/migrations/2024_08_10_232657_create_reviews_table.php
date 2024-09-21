@@ -9,9 +9,9 @@ class CreateReviewsTable extends Migration {
 	public function up()
 	{
 		Schema::create('reviews', function(Blueprint $table) {
-			$table->increments('id');
-			$table->integer('client_id')->unsigned();
-			$table->integer('product_id')->unsigned();
+			$table->id('id');
+			$table->unsignedBigInteger('client_id');
+			$table->unsignedBigInteger('product_id');
 			$table->text('body');
 			$table->integer('rate');
 			$table->foreign('client_id')->references('id')->on('clients')

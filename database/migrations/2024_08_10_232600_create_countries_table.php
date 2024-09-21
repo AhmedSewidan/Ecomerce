@@ -9,7 +9,7 @@ class CreateCountriesTable extends Migration {
 	public function up()
 	{
 		Schema::create('countries', function(Blueprint $table) {
-			$table->increments('id');
+			$table->id('id');
 			$table->string('title', 100);
 			$table->timestamps();
 		});

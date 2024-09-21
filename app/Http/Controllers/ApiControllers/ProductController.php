@@ -26,14 +26,12 @@ class ProductController extends ApiController
   
   public function latestProducts()
   {
-    $products = Product::latestProducts()->get();
-    return $this->response( ProductResource::collection( $products ) );
+    return ProductResource::collection(  Product::latestProducts()->paginate(5) );
   }
   
   public function mostOrdered()
   {
-    $products = Product::mostOrdered()->limit(5)->get();
-    return $this->response( ProductResource::collection($products) );
+    return ProductResource::collection( Product::mostOrdered()->paginate(5) );
   }
 
   public function show($id)

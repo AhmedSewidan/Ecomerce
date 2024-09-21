@@ -9,9 +9,9 @@ class CreateOrdersTable extends Migration {
 	public function up()
 	{
 		Schema::create('orders', function(Blueprint $table) {
-			$table->increments('id');
-			$table->integer('client_id')->unsigned();
-			$table->integer('address_id')->unsigned();
+			$table->id('id');
+			$table->unsignedBigInteger('client_id');
+			$table->unsignedBigInteger('address_id');
 			$table->enum('pay', array('fawry', 'vodafone-cash', 'vesa', 'paypal', 'upon-delivary'));
 			$table->enum('status', array('in-cart', 'canceled', 'pending', 'accepted', 'delivered'));
 			$table->decimal('total');
