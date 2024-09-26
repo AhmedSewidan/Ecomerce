@@ -20,7 +20,7 @@ class OrderController extends ApiController
 
         $data       = [
             'order'     => new OrderResource( $order ),
-            'products'  => ProductsInCartResource::collection( optional($order)->products ?? null )
+            'products'  => ProductsInCartResource::collection( $order->products )
         ];
 
         return $this->response( $data );
@@ -28,14 +28,12 @@ class OrderController extends ApiController
 
     public function addTOcart( ProductCartRequest $request )
     {
-        $user                 = JWTAuth::user();
-        $product              = Product::find( $request->product_id );
-        $order                = $user->orders()->where('status', 'in-cart')->latest()->first();
-
-        if (!$product) {
+        if ( !$product = Product::find( $request->product_id ) ) {
             return $this->errorMessage('Product not found');
         }
 
+        $user                 = JWTAuth::user();
+        $order                = $user->orders()->where('status', 'in-cart')->latest()->first();
         $order_product        = $order->products()->where('product_id', $request->product_id)->first();
 
         if( $order_product ){   
@@ -57,13 +55,12 @@ class OrderController extends ApiController
 
     public function editQuantity( ProductCartRequest $request )
     {
-        $user                 = JWTAuth::user();
-        $product              = Product::find( $request->product_id );
-        $order                = $user->orders()->where('status', 'in-cart')->latest()->first();
-
-        if (!$product) {  // this check 1% to exist
+        if ( !$product = Product::find( $request->product_id ) ) {
             return $this->errorMessage('Product not found');
         }
+
+        $user                 = JWTAuth::user();
+        $order                = $user->orders()->where('status', 'in-cart')->latest()->first();
         
         if( !$order->products()->where('product_id', $request->product_id)->first() ){  // this check 1% to exist
             return $this->errorMessage('This product doesn\'t exists in cart');

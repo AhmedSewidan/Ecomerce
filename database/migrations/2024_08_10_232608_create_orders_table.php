@@ -11,7 +11,7 @@ class CreateOrdersTable extends Migration {
 		Schema::create('orders', function(Blueprint $table) {
 			$table->id('id');
 			$table->unsignedBigInteger('client_id');
-			$table->unsignedBigInteger('address_id');
+			$table->unsignedBigInteger('address_id')->nullable();
 			$table->enum('pay', array('fawry', 'vodafone-cash', 'vesa', 'paypal', 'upon-delivary'))->nullable();
 			$table->enum('status', array('in-cart', 'canceled', 'pending', 'accepted', 'delivered'))->default('in-cart');
 			$table->decimal('total')->nullable();

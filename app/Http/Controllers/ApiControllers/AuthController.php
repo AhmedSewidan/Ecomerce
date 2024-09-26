@@ -42,15 +42,8 @@ class AuthController extends ApiController
             
         ]);
 
-        $address = Address::create([
-            'city_id'       => $request->city_id,
-            'client_id'     => $user->id,
-            'address_line'  => $request->address
-        ]);
-
         Order::create([
             'client_id'     => $user->id,
-            'address_id'     => $address->id,
         ]);
 
         $token = JWTAuth::fromUser( $user );
