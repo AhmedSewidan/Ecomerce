@@ -12,9 +12,9 @@ class CreateOrdersTable extends Migration {
 			$table->id('id');
 			$table->unsignedBigInteger('client_id');
 			$table->unsignedBigInteger('address_id');
-			$table->enum('pay', array('fawry', 'vodafone-cash', 'vesa', 'paypal', 'upon-delivary'));
-			$table->enum('status', array('in-cart', 'canceled', 'pending', 'accepted', 'delivered'));
-			$table->decimal('total');
+			$table->enum('pay', array('fawry', 'vodafone-cash', 'vesa', 'paypal', 'upon-delivary'))->nullable();
+			$table->enum('status', array('in-cart', 'canceled', 'pending', 'accepted', 'delivered'))->default('in-cart');
+			$table->decimal('total')->nullable();
 			$table->foreign('client_id')->references('id')->on('clients')
 						->onDelete('cascade')
 						->onUpdate('cascade');

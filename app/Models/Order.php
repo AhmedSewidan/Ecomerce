@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Order extends Model 
 {
@@ -12,8 +13,11 @@ class Order extends Model
     
     protected $table = 'orders';
     public $timestamps = true;
-    protected $fillable = array('address_id', 'pay', 'status', 'total');
+    protected $fillable = array( 'client_id', 'address_id', 'pay', 'status', 'total');
 
+    // Get Attribute
+
+    // Relations
     public function client()
     {
         return $this->belongsTo(Client::class);
@@ -21,7 +25,7 @@ class Order extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class)->withPivot('price', 'quantity');
     }
 
     public function address()

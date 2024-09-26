@@ -7,8 +7,10 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\ApiResources\ClientResource;
 use App\Mail\SendOTP;
+use App\Models\Address;
 use App\Models\Client;
 use App\Models\Code;
+use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -29,20 +31,27 @@ class AuthController extends ApiController
     // Register
     public function register( RegisterRequest $request )
     {
-        try{
-            $user = Client::create([
-                'name'      => $request->name,
-                'email'     => $request->email,
-                'password'  => Hash::make( $request->password ),
-            ]);
-        } catch ( QueryException  $e){
-
-            if ($e->errorInfo[1] == 1062) {
-                return $this->errorMessage('This email is already used.');
-            }
-
-            return $this->errorMessage('An error occurred: ' . $e->getMessage());
+        if( Client::where('email', $request->email)->exists() ){
+            return $this->errorMessage('This email is already used.');
         }
+        
+        $user = Client::create([
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'password'  => Hash::make( $request->password ),
+            
+        ]);
+
+        $address = Address::create([
+            'city_id'       => $request->city_id,
+            'client_id'     => $user->id,
+            'address_line'  => $request->address
+        ]);
+
+        Order::create([
+            'client_id'     => $user->id,
+            'address_id'     => $address->id,
+        ]);
 
         $token = JWTAuth::fromUser( $user );
 
@@ -128,17 +137,17 @@ class AuthController extends ApiController
 
         $data = [
             'otp'         => $code->code,
-            'username'    => $user->name,
-            'expireTime'  => $code->expires_at->format('H:i:s')
+            'username'    => strtok(  $user->name, ' ' ),
+            'expireTime'  => $code->expires_at->format('h:i:s A')
         ];
-
+        
         try{
             Mail::to($user)->send(new SendOTP($data));
         } catch ( \Exception $e ){
             return $this->errorMessage( $e->getMessage() );
         }
         
-        return $this->successMessage('OTP sent successfully');
+        return $this->response( [ 'email' => $user->email], 'OTP sent successfully');
     }
 
     // Check code and make token
@@ -155,7 +164,10 @@ class AuthController extends ApiController
             return $this->errorMessage('User not found');
         }
 
-        $lastCode = $user->codes()->latest()->first();
+        if( !$lastCode = $user->codes()->latest()->first() ){
+            return $this->errorMessage('Code is invalid');
+        }
+        
 
         if( $lastCode->expires_at < now() ){
             return $this->errorMessage('Code is expired try again');

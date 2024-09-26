@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiControllers\CategoryController;
 use App\Http\Controllers\ApiControllers\CityController;
 use App\Http\Controllers\ApiControllers\CountryController;
 use App\Http\Controllers\ApiControllers\GovernorateController;
+use App\Http\Controllers\ApiControllers\OrderController;
 use App\Http\Controllers\ApiControllers\ProductController;
 use App\Http\Controllers\ApiControllers\SliderController;
 use App\Models\Category;
@@ -67,24 +68,35 @@ Route::controller(SliderController::class)->group(function(){
 
 });
 
-Route::controller(AuthController::class)->group(function(){
 
-    
-    Route::middleware(['guest'])->group(function(){
+Route::middleware(['guest'])->group(function(){
+    Route::controller(AuthController::class)->group(function(){
+
         Route::post('/register', 'register');
         Route::post('/login', 'login');
         Route::post('/send-OTP', 'sendOTP');
         Route::post('/check-OTP', 'checkOTP');
     });
+});
 
-    Route::middleware(['auth'])->group(function(){
+
+Route::middleware(['auth'])->group(function(){
+    Route::controller(AuthController::class)->group(function(){
 
         Route::post('/logout', 'logout');
         Route::post('/refresh', 'refresh');
         Route::post('/me', 'me');
         Route::put('/update/{id}', 'update');
         Route::post('/reset-password', 'resetPassword');
-
     });
+
+    Route::controller( OrderController::class )->group( function(){
+
+        Route::get('/order-in-cart', 'orderInCart');
+        Route::post('/add-to-cart', 'addTOcart');
+        Route::post('/edit-quantity', 'editQuantity');
+        Route::get('/remove-from-cart', 'removeFromCart');
+        Route::get('/clear-cart', 'clearCart');
+    } );
 
 });

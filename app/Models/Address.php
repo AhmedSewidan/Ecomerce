@@ -12,7 +12,7 @@ class Address extends Model
     
     protected $table = 'addresses';
     public $timestamps = true;
-    protected $fillable = array('city_id', 'client_id', 'title');
+    protected $fillable = array('city_id', 'client_id', 'address_line');
 
     public function city()
     {

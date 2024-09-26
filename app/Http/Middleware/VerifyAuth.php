@@ -17,7 +17,11 @@ class VerifyAuth
     public function handle(Request $request, Closure $next): Response
     {
         try{
-            JWTAuth::parseToken()->authenticate();
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
             return response()->json([ 'message' => 'Token invalid'], 400);
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {

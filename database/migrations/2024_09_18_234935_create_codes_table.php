@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('client_id');
             $table->string('code');
-            $table->timestamp('expires_at', 6);
+            $table->timestamp('expires_at');
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
-            $table->timestamps(6);
+            $table->timestamps();
         });
     }
 
