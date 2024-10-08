@@ -12,7 +12,9 @@ class CreateAddressesTable extends Migration {
 			$table->id('id');
 			$table->unsignedBigInteger('city_id');
 			$table->unsignedBigInteger('client_id');
+			$table->string('title');
 			$table->text('address_line');
+            $table->boolean('default')->default(0);
 			$table->foreign('city_id')->references('id')->on('cities')
 						->onDelete('cascade')
 						->onUpdate('cascade');

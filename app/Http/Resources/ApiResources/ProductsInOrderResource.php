@@ -5,7 +5,7 @@ namespace App\Http\Resources\ApiResources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductsInCartResource extends JsonResource
+class ProductsInOrderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,8 +20,8 @@ class ProductsInCartResource extends JsonResource
             'title'                  => $this->title,
             'discount'               => $this->discount,
             'price'                  => $this->price,
-            'total_price'            => $this->pivot->price * $this->pivot->quantity,
-            'amount_after_discount'  => strval( $this->amountAfterDiscount ),
+            'quantity'               => $this->pivot->quantity,
+            'total'                  => strval( round( $this->pivot->price * $this->pivot->quantity, 2  )) 
         ];
     }
 }

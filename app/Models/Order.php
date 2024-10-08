@@ -11,11 +11,36 @@ class Order extends Model
 
     use HasFactory;
     
-    protected $table = 'orders';
     public $timestamps = true;
-    protected $fillable = array( 'client_id', 'address_id', 'pay', 'status', 'total');
+    protected $fillable = array( 
+        'client_id', 'code', 'order_address_id', 'pay', 'status', 'comment', 'total', 'expires_at'
+        );
 
-    // Get Attribute
+
+    // Methods
+    public static function generateUniqueCode( $digits = 7 )
+    {
+        $randomNumber = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
+        
+        do {
+            $code = '#' . $randomNumber;
+        } while ( self::where('code', $code)->exists() );
+
+        return $code;
+    }
+
+    public static function expiresAtTime( $expiresAfter = 10 )
+    {
+        return now()->addDays($expiresAfter);
+    }
+
+
+    // Scopes
+    public function scopeOrderInCart($query)
+    {
+        return $query->where('status', 'in-cart')->where('expires_at', '>', now());
+    }
+
 
     // Relations
     public function client()
@@ -30,7 +55,7 @@ class Order extends Model
 
     public function address()
     {
-        return $this->belongsTo(Address::class);
+        return $this->belongsTo( OrderAddress::class, 'order_address_id' );
     }
 
 }

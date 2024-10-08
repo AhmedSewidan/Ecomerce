@@ -2,20 +2,15 @@
 
 namespace App\Http\Controllers\ApiControllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\ApiResources\ClientResource;
 use App\Mail\SendOTP;
-use App\Models\Address;
 use App\Models\Client;
 use App\Models\Code;
 use App\Models\Order;
-use Carbon\Carbon;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -41,9 +36,11 @@ class AuthController extends ApiController
             'password'  => Hash::make( $request->password ),
             
         ]);
-
+        
         Order::create([
             'client_id'     => $user->id,
+            'code'          => Order::generateUniqueCode(),
+            'expires_at'    => now()->addDays(10)
         ]);
 
         $token = JWTAuth::fromUser( $user );

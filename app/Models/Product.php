@@ -18,11 +18,16 @@ class Product extends Model
     {
         return $this->discount ? ($this->price * $this->discount) : $this->price;
     }
-
+    
     // Scopes 
     public function scopeLatestProducts( $query )
     {
         return $query->orderBy('created_at', 'desc');
+    }
+    
+    public function scopeProductsShown( $query )
+    {
+        return $query->where('status', '1');
     }
     
     public function scopeMostOrdered( $query )

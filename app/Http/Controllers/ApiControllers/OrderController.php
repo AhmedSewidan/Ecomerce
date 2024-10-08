@@ -2,25 +2,36 @@
 
 namespace App\Http\Controllers\ApiControllers;
 
-use App\Http\Requests\EditProductInCartRequest;
 use App\Http\Requests\ProductCartRequest;
+use App\Http\Resources\ApiResources\AddressResource;
+use App\Http\Resources\ApiResources\OrderAddressResource;
 use App\Http\Resources\ApiResources\OrderResource;
-use App\Http\Resources\ApiResources\ProductsInCartResource;
+use App\Http\Resources\ApiResources\ProductsInOrderResource;
+use App\Mail\OrderDelivery;
 use App\Models\Order;
+use App\Models\OrderAddress;
 use App\Models\Product;
+use App\Traits\OrderTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class OrderController extends ApiController
 {
+    use OrderTrait;
+
     public function orderInCart()
     {
         $user       = JWTAuth::user();
-        $order      = $user->orders()->where('status', 'in-cart')->latest()->first();
+        $order      = Order::where('client_id', $user->id)->orderInCart()->latest()->first();
+        
+        if (!$order) {
+            $this->createOrder($user->id);
+        }
 
         $data       = [
             'order'     => new OrderResource( $order ),
-            'products'  => ProductsInCartResource::collection( $order->products )
+            'products'  => ProductsInOrderResource::collection( $order->products )
         ];
 
         return $this->response( $data );
@@ -29,17 +40,21 @@ class OrderController extends ApiController
     public function addTOcart( ProductCartRequest $request )
     {
         if ( !$product = Product::find( $request->product_id ) ) {
-            return $this->errorMessage('Product not found');
+            return $this->errorMessage('Product not found', 404);
         }
 
         $user                 = JWTAuth::user();
-        $order                = $user->orders()->where('status', 'in-cart')->latest()->first();
-        $order_product        = $order->products()->where('product_id', $request->product_id)->first();
+        $order                = Order::where('client_id', $user->id)->orderInCart()->latest()->first();
 
-        if( $order_product ){   
+        if (!$order) {
+            $this->createOrder($user->id);
+        }
+
+        $productInPivot        = $order->products()->where('product_id', $request->product_id)->first();
+
+        if( $productInPivot ){   
             $order->products()->updateExistingPivot( $product->id, [
-                'price'      => $product->price,
-                'quantity'   => $order_product->pivot->quantity + $request->quantity
+                'quantity'   => $productInPivot->pivot->quantity + $request->quantity
             ] );
         }else{
             $order->products()->attach( $product->id, [
@@ -47,8 +62,8 @@ class OrderController extends ApiController
                 'quantity'   => $request->quantity
             ] );
         }
-
-        $this->updateOrderTotal( $user );
+        
+        $this->updateOrderTotal( $order );
 
         return $this->successMessage('Product saved succsessfully');
     }
@@ -56,51 +71,46 @@ class OrderController extends ApiController
     public function editQuantity( ProductCartRequest $request )
     {
         if ( !$product = Product::find( $request->product_id ) ) {
-            return $this->errorMessage('Product not found');
+            return $this->errorMessage('Product not found', 404);
         }
 
         $user                 = JWTAuth::user();
-        $order                = $user->orders()->where('status', 'in-cart')->latest()->first();
+        $order                = Order::where('client_id', $user->id)->orderInCart()->latest()->first();
         
         if( !$order->products()->where('product_id', $request->product_id)->first() ){  // this check 1% to exist
             return $this->errorMessage('This product doesn\'t exists in cart');
         }
         
-        if( $request->quantity > 0 )
-        {   
+        if( $request->quantity > 0 ){   
             $order->products()->updateExistingPivot( $product->id, [
-                'price'      => $product->price,
                 'quantity'   => $request->quantity
             ] );
         }else{
             $order->products()->detach( $product->id );
         }
 
-        $this->updateOrderTotal( $user );
+        $this->updateOrderTotal( $order );
 
         return $this->successMessage('Product saved succsessfully');
     }
 
-    public function removeFromCart( Request $request )
+    public function removeFromCart( string $id )
     {
-        $request->validate([
-            'product_id'    => 'required|integer'
-        ]);
-
         $user            = JWTAuth::user();
-        $product         = Product::find( $request->product_id );
+        $product         = Product::find( $id );
         
         if (!$product) {
             return $this->errorMessage('Product not found');
         }
         
-        $order           = $user->orders()->where('status', 'in-cart')->latest()->first();
+        $order           = Order::where('client_id', $user->id)->orderInCart()->latest()->first();
         
         if( !$order->products()->find( $product->id ) ){
             return $this->errorMessage('Error this product doesn\'t exists in cart');
         }
 
         $order->products()->detach( $product->id );
+        $this->updateOrderTotal($order);
 
         return $this->successMessage('Deleted successfully');
 
@@ -109,32 +119,83 @@ class OrderController extends ApiController
     public function clearCart()
     {
         $user            = JWTAuth::user();
-        $order           = $user->orders()->where('status', 'in-cart')->latest()->first();
-        
-        if( !$order->products() ){
-            return $this->errorMessage('No products in cart');
-        }
+        $order           = Order::where('client_id', $user->id)->orderInCart()->latest()->first();
 
         $order->products()->detach();
-        $this->updateOrderTotal($user);
+        $this->updateOrderTotal( $order );
 
         return $this->successMessage('Cleared successfully');
 
     }
 
-    public function updateOrderTotal( $user )  // Method to call in the class to update order quantity
+    public function orderDetails()
     {
-        $order      = $user->orders()->where('status', 'in-cart')->latest()->first();
+        $user       = JWTAuth::user();
+        $order      = Order::where('client_id', $user->id)->orderInCart()->latest()->first();
         
-        $total = 0;
-        foreach( $order->products as $order_product ){
-            $total   += $order_product->pivot->price * $order_product->pivot->quantity; 
+        if (!$order) {
+            $this->createOrder($user->id);
+        }
+        
+        // $address    = $order->address ? $order->address : $user->addresses()->where('default', 1)->first();
+        
+        $data       = [
+            'order'       => new OrderResource( $order ),
+            'products'    => ProductsInOrderResource::collection( $order->products ),
+            'addresses'   => AddressResource::collection($user->addresses)
+        ];
+
+        return $this->response( $data );
+    }
+
+    public function checkout( Request $request )
+    {
+        $request->validate([
+            'address_id'     => 'required|integer',
+            'pay_method'     => 'required|string|in:vodafone-cash,vesa,paypal,upon-delivary',
+            'comment'        => 'sometimes|string|max:300'
+        ]);  
+
+        if( $request->pay_method !== 'upon-delivary' ){
+            return $this->errorMessage('Sorry this method isn\'t available at this time');
         }
 
-        $order->update([
-            'total'     => $total,
-        ]);
+        $user                = JWTAuth::user();
+        $order               = Order::where('client_id', $user->id)->orderInCart()->latest()->first();
 
-        return true;
+        if( !$addressToCopy  = $user->addresses()->find($request->address_id) ){
+            return $this->errorMessage( 'Address not found', 404);
+        }
+
+        $orderAddress = OrderAddress::create( $addressToCopy->only(['city_id', 'client_id', 'title', 'address_line']) );
+        
+        $updateOrderData           = [
+            'order_address_id' => $orderAddress->id,
+            'pay'              => $request->pay_method,
+            'status'           => 'pending',
+        ];
+
+        if( $request->has('comment') ){
+            $updateOrderData['comment'] = $request->comment;
+        }
+        
+        $order->update( $updateOrderData );
+
+        $this->createOrder($user->id);
+
+        $mailData       = [
+            'username'      => strtok(  $user->name, ' ' ),
+            'order_code'    => $order->code
+        ];
+
+        try{
+            Mail::to($user)->send(new OrderDelivery( $mailData ));
+        } catch ( \Exception $e ){
+            return $this->errorMessage( $e->getMessage() );
+        }
+        
+        return $this->response( new OrderResource($order), 'Your Order is now pending' );
+
     }
+
 }

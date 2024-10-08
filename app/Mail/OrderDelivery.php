@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendOTP extends Mailable
+class OrderDelivery extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -26,24 +26,14 @@ class SendOTP extends Mailable
 
     public function build()
     {
-        return $this->view('mails.OTP-mail')
+        return $this->view('mails.order-delivery-mail')
                     ->with(['data' => $this->data])
-                    ->subject('Ckeck your otp');
+                    ->subject('Check Your Order');
     }
 
     /**
-     * Get the message envelope.
+     * Get the message content definition.
      */
-    // public function envelope(): Envelope
-    // {
-    //     return new Envelope(
-    //         subject: 'Send Code',
-    //     );
-    // }
-
-    // /**
-    //  * Get the message content definition.
-    //  */
     // public function content(): Content
     // {
     //     return new Content(

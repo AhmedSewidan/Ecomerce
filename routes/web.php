@@ -3,6 +3,7 @@
 use App\Http\Controllers\ApiControllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Mail\OrderDelivery;
 use App\Mail\SendCode;
 use App\Mail\SendOTP;
 use App\Models\Category;
@@ -20,17 +21,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/send', function () {
-//     try{
-
-//         $mail = Mail::to('ahmedsewidan139@gmail.com')->send(new SendOTP('1235'));
-
-//         if( $mail ){
-//             return 'Mail sent successfully';
-//         }
-        
-//     } catch ( \Exception $e ){
-
-//         return $e->getMessage();
-//     }
-// });
+Route::get('/send', function () {
+    $mailData       = [
+        'username'      => 'Ahmed',
+        'order_code'    => '#12345'
+    ];
+    
+    try{
+        // Mail::to('ahmedsewidan139@gmail.com')->send(new OrderDelivery( $mailData ));
+        return 'Mail sent successfully';
+    } catch ( \Exception $e ){
+        return $e->getMessage();
+    }
+});

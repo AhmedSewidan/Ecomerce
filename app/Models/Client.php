@@ -36,15 +36,17 @@ class Client extends Authenticatable implements JWTSubject
         return [];
     }
 
-    
-
     protected $table = 'clients';
     public $timestamps = true;
     protected $fillable = array('name', 'email', 'password', 'email_verified_at');
 
+    // Scopes
+
+    
+    // Relations 
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class, 'client_id');
     }
 
     public function reviews()

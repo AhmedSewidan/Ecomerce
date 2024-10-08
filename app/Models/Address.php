@@ -12,16 +12,18 @@ class Address extends Model
     
     protected $table = 'addresses';
     public $timestamps = true;
-    protected $fillable = array('city_id', 'client_id', 'address_line');
+    protected $fillable = array('city_id', 'client_id', 'address_line', 'default', 'title');
 
+    // Scopes
+    public function scopeDefaultAddress($query)
+    {
+        return $query->where('default', 1);
+    }
+
+    // Relations
     public function city()
     {
         return $this->belongsTo(City::class);
-    }
-
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
     }
 
     public function client()
